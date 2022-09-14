@@ -102,6 +102,10 @@ dependencies:
   # For taking screenshots
   screenshot: ^1.2.3
 
+  # All the firebase lib(s) used in the project
+  firebase_auth: ^3.8.0
+  firebase_core: ^1.22.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

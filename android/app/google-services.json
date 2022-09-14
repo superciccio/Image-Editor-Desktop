@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "699286347117",
+    "project_id": "photo-editor-507a0",
+    "storage_bucket": "photo-editor-507a0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:699286347117:android:6da6b294d0de9aeb0ace64",
+        "android_client_info": {
+          "package_name": "com.sillyapps.photo_editor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "699286347117-lp7710tk158cu4pii6cgc41ipfpb2gft.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDso6GQEWZ1hz8PihOSACqNcHDlLpM97CQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "699286347117-lp7710tk158cu4pii6cgc41ipfpb2gft.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

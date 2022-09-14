@@ -3,14 +3,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:photo_editor/ui/common/widgets/prompt_dialog.dart';
-import 'package:url_launcher/url_launcher.dart' as url_launcher;
+import 'package:photo_editor/services/auth_service/auth_cubit.dart';
 import 'package:photo_editor/ui/common/widgets/bar.dart';
 import 'package:photo_editor/ui/common/widgets/info_dialog.dart';
+import 'package:photo_editor/ui/common/widgets/prompt_dialog.dart';
 import 'package:photo_editor/ui/screens/about_screen/about_screen.dart';
 import 'package:photo_editor/ui/screens/editor_screen/bloc/editor_bloc/editor_bloc.dart';
 import 'package:photo_editor/ui/screens/editor_screen/bloc/screenshot_cubit/screenshot_cubit.dart';
 import 'package:photo_editor/ui/screens/editor_screen/widgets/settings_dialog.dart';
+import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
 import 'generate_image_settings_dialog.dart';
 
@@ -20,6 +21,7 @@ class EditorScreenAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData toc = Theme.of(context);
+    var auth = context.watch<AuthCubit>();
     return Bar(
       backgroundColor: toc.colorScheme.primary,
       mainAxis: Axis.horizontal,
@@ -35,6 +37,15 @@ class EditorScreenAppBar extends StatelessWidget {
           AppLocalizations.of(context)!.about,
           () => Navigator.of(context).pushNamed(AboutScreen.routeName),
         ),
+        const Spacer(),
+        _buildBarAction(context, auth.state.isLogged ? "Logout" : "Login", () {
+          auth.state.isLogged ? auth.logout() : auth.signIn();
+        }),
+        _buildBarAction(
+          context,
+          auth.state.isLogged ? "Signed" : "Not Signed",
+          () {},
+        )
       ],
     );
   }
@@ -70,9 +81,11 @@ Widget _buildFileMenu(BuildContext context) {
           onTap: () => Future.delayed(
             Duration.zero,
             () async {
-              final bool generateImageSettingsValid = await showGenerateImageSettingsDialog(context);
+              final bool generateImageSettingsValid =
+                  await showGenerateImageSettingsDialog(context);
               if (generateImageSettingsValid) {
-                final editorElements = context.read<EditorBloc>().state.editor.elements;
+                final editorElements =
+                    context.read<EditorBloc>().state.editor.elements;
                 final canvasSize = (context
                         .read<EditorBloc>()
                         .state
@@ -81,18 +94,26 @@ Widget _buildFileMenu(BuildContext context) {
                         .currentContext!
                         .findRenderObject() as RenderBox)
                     .size;
-                final result = await context.read<ScreenshotCubit>().captureWidget(
-                      elements: editorElements.toList(),
-                      context: context,
-                      canvasSize: canvasSize,
-                      canvasBackgroundColor: context.read<EditorBloc>().state.canvasBackgroundColor,
-                      canvasBackgroundImageFile: context.read<EditorBloc>().state.canvasBackgroundImageFile,
-                    );
+                final result =
+                    await context.read<ScreenshotCubit>().captureWidget(
+                          elements: editorElements.toList(),
+                          context: context,
+                          canvasSize: canvasSize,
+                          canvasBackgroundColor: context
+                              .read<EditorBloc>()
+                              .state
+                              .canvasBackgroundColor,
+                          canvasBackgroundImageFile: context
+                              .read<EditorBloc>()
+                              .state
+                              .canvasBackgroundImageFile,
+                        );
                 result.fold(
                   (message) => showInfoDialog(context, message),
                   (_) async => showPromptDialog(
                     context: context,
-                    title: AppLocalizations.of(context)!.openGeneratedImagesFolderPrompt,
+                    title: AppLocalizations.of(context)!
+                        .openGeneratedImagesFolderPrompt,
                     onConfirm: () async {
                       final Uri savedImagesUri = Uri.parse(
                           'file:${context.read<ScreenshotCubit>().state.outputImageDirectory.toNullable()!.path}');
