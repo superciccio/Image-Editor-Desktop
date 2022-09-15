@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -8,14 +10,17 @@ import 'package:path_provider/path_provider.dart';
 import 'package:photo_editor/localization/language.dart';
 import 'package:photo_editor/localization/localization_cubit.dart';
 import 'package:photo_editor/service_provider/service_provider.dart' as service_provider;
+import 'package:photo_editor/services/auth_service/auth_cubit.dart';
 import 'package:photo_editor/ui/common/routes/route_transitions.dart' as route_transitions;
 import 'package:photo_editor/ui/common/styles/styles.dart' as styles;
 import 'package:photo_editor/ui/screens/about_screen/about_screen.dart';
 import 'package:photo_editor/ui/screens/editor_screen/bloc/editor_bloc/editor_bloc.dart';
 import 'package:photo_editor/ui/screens/editor_screen/bloc/screenshot_cubit/screenshot_cubit.dart';
-import 'package:photo_editor/ui/screens/error_screen/error_screen.dart';
 import 'package:photo_editor/ui/screens/editor_screen/editor_screen.dart';
+import 'package:photo_editor/ui/screens/error_screen/error_screen.dart';
 import 'package:window_size/window_size.dart' as window_size;
+
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,6 +39,12 @@ void main() async {
   // uncomment the following line to prevent http fetching of google fonts
   // GoogleFonts.config.allowRuntimeFetching = false;
 
+  // initialise Firebase
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Ideal time to initialize
+  await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+
   HydratedBlocOverrides.runZoned(
     () => runApp(const PhotoEditorApp()),
     storage: storage,
@@ -49,6 +60,9 @@ class PhotoEditorApp extends StatelessWidget {
           BlocProvider(create: (context) => service_provider.serviceProvider.get<EditorBloc>()),
           BlocProvider(create: (context) => service_provider.serviceProvider.get<ScreenshotCubit>()),
           BlocProvider(create: (context) => LocalizationCubit()),
+          BlocProvider(
+            create: (context) => AuthCubit(),
+          )
         ],
         child: Builder(
           builder: (context) => BlocBuilder<LocalizationCubit, LocalizationState>(
