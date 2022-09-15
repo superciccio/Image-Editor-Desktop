@@ -38,12 +38,14 @@ class EditorScreenAppBar extends StatelessWidget {
           () => Navigator.of(context).pushNamed(AboutScreen.routeName),
         ),
         const Spacer(),
-        _buildBarAction(context, auth.state.isLogged ? "Logout" : "Login", () {
+        _buildBarAction(
+            context, auth.state.isLogged ? AppLocalizations.of(context)!.logout : AppLocalizations.of(context)!.login,
+            () {
           auth.state.isLogged ? auth.logout() : auth.signIn();
         }),
         _buildBarAction(
           context,
-          auth.state.isLogged ? "Signed" : "Not Signed",
+          auth.state.isLogged ? AppLocalizations.of(context)!.signed : AppLocalizations.of(context)!.notSigned,
           () {},
         )
       ],
