@@ -70,8 +70,8 @@ class PhotoEditorApp extends StatelessWidget {
                   service_provider.serviceProvider.get<ScreenshotCubit>()),
           BlocProvider(create: (context) => LocalizationCubit()),
           BlocProvider(
-              create: (context) =>
-                  service_provider.serviceProvider.get<AuthCubit>()),
+            create: (context) => AuthCubit(),
+          )
         ],
         child: Builder(
           builder: (context) =>
