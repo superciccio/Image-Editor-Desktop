@@ -5,7 +5,7 @@ import 'package:photo_editor/services/auth_service/authentication_impl.dart';
 /// It does also have functions to login and logout
 @Injectable()
 abstract class Authentication {
-  /// Default implementation of Authentication class
+  @factoryMethod
   factory Authentication() => AuthenticationImpl();
 
   /// SignIn the user
